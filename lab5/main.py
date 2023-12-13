@@ -13,9 +13,7 @@ import translators as ts
 from forex_python.converter import CurrencyRates
 
 
-# инициализация бота и хранилища состояний
-
-TOKEN = '6806009909:AAHiwG96UKgt6NcFSx5IJClCtTtlEfzovWw'
+TOKEN = 'your_token'
 
 form_router = Router()
 
@@ -32,14 +30,12 @@ class Conversation(StatesGroup):
     translate = State()
 
 
-# обработка команды /start
 @form_router.message(CommandStart())
 async def start_command(message: Message, state: FSMContext):
     await state.set_state(Conversation.name)
     await message.answer("Привет! Как тебя зовут?")
 
 
-# обработка текстовых сообщений в состоянии waiting_for_name
 @form_router.message(Conversation.name)
 async def process_name(message: Message, state: FSMContext):
     await state.update_data(name=message.text)
@@ -47,7 +43,6 @@ async def process_name(message: Message, state: FSMContext):
     await message.answer("Сколько тебе лет?")
 
 
-# обработка текстовых сообщений в состоянии waiting_for_age
 @form_router.message(Conversation.age)
 async def process_age_invalid(message: Message, state: FSMContext):
     kb = [
@@ -68,7 +63,6 @@ async def process_age_invalid(message: Message, state: FSMContext):
                              reply_markup=keyboard)
 
 
-# обработка текстовых сообщений
 @form_router.message(F.text.lower() == 'привет')
 async def greet(message: Message):
     await message.answer("Привет!")
@@ -119,8 +113,8 @@ async def answer_translation_message(message: Message, state: FSMContext):
 async def get_weather(city: str):
   async with python_weather.Client(unit=python_weather.IMPERIAL) as client:
     weather = await client.get(city)
-    text = f'''Температура: {weather.current.temperature} градусов C
-Чувствуется температура как: {weather.current.feels_like} градусов C
+    text = f'''Температура: {int((weather.current.temperature - 32) * 5 / 9)} градусов C
+Чувствуется температура как: {int((weather.current.feels_like - 32) * 5 / 9)} градусов C
 Давление: {weather.current.pressure}
 Осадки: {weather.current.precipitation} мм
 Влажность: {weather.current.humidity} %
@@ -137,7 +131,6 @@ async def get_translation(text: str):
     return ts.translate_text(text, translator='google', to_language='ru')
 
 
-# обработка неизвестных команд
 @form_router.message()
 async def unknown_command(message: Message):
     await message.answer("Введите команду.")

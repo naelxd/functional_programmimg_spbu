@@ -6,6 +6,7 @@ import numpy as np
 import tkinter as tk
 from tkinter import filedialog as fd
 
+Image.MAX_IMAGE_PIXELS = 933120000
 
 def process_image_chunk(chunk, output_folder):
     image_path, chunk_index, chunk_data = chunk
