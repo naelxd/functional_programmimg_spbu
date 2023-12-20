@@ -1,3 +1,4 @@
 env/
 .DS_Store
 10.jpg
+__pycache__
